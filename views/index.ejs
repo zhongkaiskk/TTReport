@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USA Two-Way SMS Team (中凯）</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --matrix-green: #00ff41;
+            --matrix-dark: #002b00;
+            --cyber-blue: #0ff;
+            --neon-pink: #ff00ff;
+            --dark-bg: #000500;
+            --terminal-shadow: 0 0 10px var(--matrix-green);
+        }
+
+        @font-face {
+            font-family: 'Matrix Code NFI';
+            src: url('https://fonts.cdnfonts.com/css/matrix-code-nfi') format('woff2');
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--matrix-green);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Matrix Rain Canvas */
+        #matrixCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.15;
+            z-index: -1;
+        }
+
+        /* CRT Screen Effect */
+        .crt-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .header {
+            background: rgba(0, 5, 0, 0.9);
+            padding: 2rem 0;
+            position: relative;
+            border-bottom: 2px solid var(--matrix-green);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            color: var(--matrix-green);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            text-shadow: var(--terminal-shadow);
+            font-family: 'Matrix Code NFI', monospace;
+            position: relative;
+        }
+
+        .logo i {
+            animation: pulse 2s infinite;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: var(--cyber-blue);
+            margin-top: 0.5rem;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            opacity: 0.8;
+        }
+
+        .name-links-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .name-link {
+            background: rgba(0, 15, 0, 0.8);
+            border: 1px solid var(--matrix-green);
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .name-link::before {
+            content: '>';
+            position: absolute;
+            left: 10px;
+            color: var(--matrix-green);
+            animation: blink 1s infinite;
+        }
+
+        .name-link::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(0, 255, 65, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            transition: 0.5s;
+        }
+
+        .name-link:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 255, 65, 0.2);
+            background: var(--matrix-dark);
+        }
+
+        .name-link:hover::after {
+            left: 100%;
+        }
+
+        .name-link a {
+            color: var(--matrix-green);
+            text-decoration: none;
+            font-size: 1.2rem;
+            display: block;
+            padding-left: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        .terminal-cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1.2em;
+            background: var(--matrix-green);
+            margin-left: 5px;
+            animation: blink 1s infinite;
+        }
+
+        @media (max-width: 768px) {
+            .name-links-container {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                padding: 1rem;
+            }
+
+            .logo {
+                font-size: 1.8rem;
+            }
+
+            .name-link a {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrixCanvas"></canvas>
+    <div class="crt-overlay"></div>
+    
+    <header class="header">
+        <a href="/" class="logo">
+            <i class="fas fa-terminal"></i>
+            美国双向短信
+            <span class="terminal-cursor"></span>
+        </a>
+        <div class="subtitle">USA Two-Way SMS Team (中凯）</div>
+    </header>
+
+    <main>
+        <div class="name-links-container">
+            <% const teamMembers = [
+                '微安', '琳琳', '豪金', '庚希', '川旭', '柏钧', '宏仪', '纹三',
+                '楚耿', '君怡', '光子', '龙裕', '萌椛', '瑞韩', '月鹏', '晓勇',
+                '型芯', '雷和', '普微', '芯芷', '千理'
+            ] %>
+
+            <% teamMembers.forEach(member => { %>
+                <div class="name-link" data-name="<%= member %>">
+                <a href="/link/<%= encodeURIComponent(member) %>">
+                        <%= member %>
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+    </main>
+
+    <script>
+        // Matrix Rain Effect
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const matrix = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%";
+        const drops = [];
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+
+        for (let i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = matrix[Math.floor(Math.random() * matrix.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 33);
+
+        // Hover Effects
+        document.querySelectorAll('.name-link').forEach(link => {
+            link.addEventListener('mouseover', () => {
+                const name = link.dataset.name;
+                const chars = name.split('');
+                let counter = 0;
+                
+                const interval = setInterval(() => {
+                    if (counter >= chars.length) {
+                        clearInterval(interval);
+                        return;
+                    }
+                    
+                    const randomChar = matrix[Math.floor(Math.random() * matrix.length)];
+                    chars[counter] = randomChar;
+                    link.querySelector('a').textContent = chars.join('');
+                    
+                    setTimeout(() => {
+                        chars[counter] = name[counter];
+                        link.querySelector('a').textContent = chars.join('');
+                        counter++;
+                    }, 50);
+                }, 50);
+            });
+        });
+
+        // Responsive canvas
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            drops.length = Math.floor(canvas.width / fontSize);
+            for (let i = 0; i < drops.length; i++) {
+                drops[i] = 1;
+            }
+        });
+    </script>
+</body>
+</html>

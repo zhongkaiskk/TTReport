@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Report For <%= name %></title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@lottiefiles/lottie-player@2.0.8/dist/lottie-player.js"></script>
+  <style>
+        /* Variables */
+        :root {
+            --primary: #0f0;
+            --primary-dark: #060;
+            --secondary: #1a1a1a;
+            --accent: #0fa;
+            --text-primary: #0f0;
+            --text-secondary: #0f8;
+            --border: rgba(0, 255, 0, 0.2);
+            --input-bg: rgba(0, 20, 0, 0.8);
+            --shadow: rgba(0, 255, 0, 0.3);
+            --card-bg: rgba(0, 10, 0, 0.9);
+        }
+        /* Loader Overlay */
+        .loader-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            flex-direction: column;
+        }
+
+        .loader-overlay.active {
+            display: flex;
+        }
+
+        .loader-text {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-top: 1rem;
+            font-family: 'Share Tech Mono', monospace;
+            text-align: center;
+        }
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap');
+        /* Animations */
+        @keyframes containerIntro {
+            0% {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(0.97) translateY(10px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes borderRotate {
+            0% { background-position: 0% %; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes matrixRain {
+            0% { background-position: 0% -100%; }
+            100% { background-position: 0% 100%; }
+        }
+
+        @keyframes titleGlow {
+            0%, 100% { text-shadow: 0 0 10px var(--primary), 0 0 20px var(--primary), 0 0 30px var(--primary); }
+            50% { text-shadow: 0 0 20px var(--accent), 0 0 30px var(--accent), 0 0 40px var(--accent); }
+        }
+
+        @keyframes scanline {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        @keyframes slideDown {
+            to { transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            to { transform: translateY(-100%); }
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background: #000;
+            background-image: 
+                repeating-linear-gradient(0deg, rgba(0,255,0,0.1) 0px, rgba(0,255,0,0.1) 1px, transparent 1px, transparent 30px),
+                repeating-linear-gradient(90deg, rgba(0,255,0,0.1) 0px, rgba(0,255,0,0.1) 1px, transparent 1px, transparent 30px);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+
+/* Container Styles */
+.container {
+    width: 100%;
+    max-width: 1400px;
+    background: rgba(0, 5, 0, 0.95);
+    position: relative;
+    padding: 2rem;
+    border-radius: 5px;
+    animation: fadeSlide 1.5s ease-in-out forwards; /* Changed to 'forwards' */
+    overflow: hidden;
+}
+
+@keyframes fadeSlide {
+    from { transform: translateX(-50px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+.element {
+    animation: fadeSlide 1s ease-out forwards;
+}    .container::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 3px;
+            padding: 3px;
+            background: linear-gradient(300deg, var(--primary), black, var(--primary));
+            background-size: 200% 200%;
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: borderRotate 4s linear infinite;
+        }
+
+        .container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            animation: scanline 2s linear infinite;
+        }
+
+        /* Form Styles */
+        .form-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+        }
+
+        .form-section {
+            background: var(--card-bg);
+            padding: 2rem;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-section::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent 20%, rgba(0,255,0,0.05) 40%, transparent 60%);
+            transform: translateX(-100%);
+            transition: 0.5s;
+        }
+
+        .form-section:hover::after {
+            transform: translateX(100%);
+        }
+
+        /* Input Styles */
+        .input-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+    font-family: 'Poppins', sans-serif; /* Poppins font */
+
+        }
+
+input {
+    width: 100%;
+    padding: 0.8rem 1rem 0.8rem 2.5rem;
+    background: var(--input-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: white;
+    font-family: 'Poppins', sans-serif; /* Poppins font */
+    font-weight: 600; /* Adjust as needed */
+    font-size: 15px; /* Adjust the size as needed */
+    transition: all 0.3s ease;
+}
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--shadow);
+        }
+
+        .input-wrapper:hover input {
+            border-color: var(--accent);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            opacity: 0.7;
+            transition: 0.3s;
+        }
+
+        .input-wrapper:hover .input-icon {
+            opacity: 1;
+            transform: translateY(-50%) scale(1.1);
+            color: var(--accent);
+        }
+
+        /* Button Styles */
+        .button-container {
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        button {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 1rem 2rem;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            background: var(--primary);
+            color: #000;
+            box-shadow: 0 0 20px var(--shadow);
+        }
+
+        /* Alert Bar Styles */
+        .alert-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(90deg, #000, #020);
+            border-bottom: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 1rem;
+            text-align: center;
+            font-weight: 500;
+            transform: translateY(-100%);
+            animation: slideDown 0.5s forwards, slideUp 0.5s forwards 10s;
+            z-index: 1000;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .form-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Title Styles */
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            animation: titleGlow 2s infinite;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <!-- Loader Overlay -->
+    <div class="loader-overlay" id="loaderOverlay">
+        <lottie-player 
+            src="https://lottie.host/20cc6af0-265a-4b77-9afc-98463d39c7d9/V9FDCmSexd.json" 
+            background="transparent" 
+            speed="1" 
+            style="width: 300px; height: 300px;" 
+            loop 
+            autoplay>
+        </lottie-player>
+        <div class="loader-text">Submitting Report...</div>
+    </div>
+
+    <div class="container">
+        <h1>Submit Report for <%= name %></h1>
+        <form action="/submit/<%= link %>" method="post" id="reportForm" autocomplete="off">
+            <input type="hidden" name="name" value="<%= name %>">
+            <div class="form-container">
+			
+                <!-- First Container -->
+				
+				
+				
+                <div class="form-section">
+				
+<div class="form-group">
+    <label for="input1">Easy Sim Acc အရေအတွက်</label>
+    <div class="input-wrapper">
+        <i class="input-icon fas fa-user-circle"></i>
+        <input type="number" id="input1" name="input1" required autocomplete="off">
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="input2">91 Acc အရေအတွက်</label>
+    <div class="input-wrapper">
+        <i class="input-icon fas fa-user-friends"></i>
+        <input type="number" id="input2" name="input2" required autocomplete="off">
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="input3">AMG Acc အရေအတွက်</label>
+    <div class="input-wrapper">
+        <i class="input-icon fas fa-users"></i>
+        <input type="number" id="input3" name="input3" required autocomplete="off">
+    </div>
+</div>
+
+<!-- Call Information Section -->
+<div class="form-group">
+    <label for="input4">ဖုန်း Call တင်တဲ့အရေအတွက်</label>
+    <div class="input-wrapper">
+        <i class="input-icon fas fa-phone-alt"></i>
+        <input type="number" id="input4" name="input4" required autocomplete="off">
+    </div>
+</div>
+
+<!-- Customer Information Section -->
+<div class="form-group">
+    <label for="input5">Easy Simကရတဲ့ဖောက်သည်အရေအတွက် (ဖုန်း Call ကရတာမပါဝင်ပါ)</label>
+    <div class="input-wrapper">
+        <i class="input-icon fas fa-user-check"></i>
+        <input type="number" id="input5" name="input5" required autocomplete="off">
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="input6">91 ကရတဲ့ဖောက်သည်အရေအတွက် (ဖုန်း Call ကရတာမပါဝင်ပါ)</label>
+    <div class="input-wrapper">
+        <i class="input-icon fas fa-user-check"></i>
+        <input type="number" id="input6" name="input6" required autocomplete="off">
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="input7">AMG ကရတဲ့ဖောက်သည်အရေအတွက် (ဖုန်း Call ကရတာမပါဝင်ပါ)</label>
+    <div class="input-wrapper">
+        <i class="input-icon fas fa-user-check"></i>
+        <input type="number" id="input7" name="input7" required autocomplete="off">
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="input8">ဖုန်း Call ကရတဲ့ဖောက်သည် အရေအတွက်</label>
+    <div class="input-wrapper">
+        <i class="input-icon fas fa-phone-volume"></i>
+        <input type="number" id="input8" name="input8" required autocomplete="off">
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="input9">စုစုပေါင်းရတဲ့ ဖောက်သည် အရေအတွက်</label>
+    <div class="input-wrapper">
+        <i class="input-icon fas fa-users"></i>
+        <input type="number" id="input9" name="input9" required autocomplete="off" readonly>
+    </div>
+</div>
+
+<!-- Data Usage Section -->
+<div class="form-group">
+    <label for="input10">စုစုပေါင်းအသုံးပြုခဲ့သော Data</label>
+    <div class="input-wrapper">
+        <i class="input-icon fas fa-database"></i>
+        <input type="number" id="input10" name="input10" required autocomplete="off">
+    </div>
+</div>
+                </div>
+
+                <!-- Second Container -->
+                <div class="form-section">
+                    <div class="form-group">
+    <label for="input11">Text Now အကောင့်ယူတဲ့ အရေအတွက်</label>
+    <div class="input-wrapper">
+        <i class="input-icon fas fa-comment-alt"></i>
+        <input type="number" id="input11" name="input11" required autocomplete="off">
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="input12">Text Now အကောင့် လက်ကျန် အရေအတွက်</label>
+    <div class="input-wrapper">
+        <i class="input-icon fas fa-comments"></i>
+        <input type="number" id="input12" name="input12" required autocomplete="off">
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="input13">Text Now ကရတဲ့ဖောက်သည် အရေအတွက် (ဖုန်း Call ကရတာမပါဝင်ပါ)</label>
+    <div class="input-wrapper">
+        <i class="input-icon fas fa-user-plus"></i>
+        <input type="number" id="input13" name="input13" required autocomplete="off">
+    </div>
+</div>
+
+<!-- Daily Data Section -->
+<div class="form-group">
+    <label for="input14">တစ်နေ့သာစုစုပေါင်းရရှိသော Data</label>
+    <div class="input-wrapper">
+        <i class="input-icon fas fa-hdd"></i>
+        <input type="number" id="input14" name="input14" required autocomplete="off">
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="input15">တစ်နေ့တာအသုံးပြုခဲ့သော‌ Data</label>
+    <div class="input-wrapper">
+        <i class="input-icon fas fa-database"></i>
+        <input type="number" id="input15" name="input15" required autocomplete="off" readonly>
+    </div>
+</div>
+
+<!-- Response Status Section -->
+<div class="form-group">
+    <label for="input16">တုံ့ပြန်မှုမရရှိခဲ့သော Data စာရင်း</label>
+    <div class="input-wrapper">
+        <i class="input-icon fas fa-user-minus"></i>
+        <input type="number" id="input16" name="input16" required autocomplete="off" readonly>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="input17">ငြင်းဆိုခဲ့သော Data စာရင်း</label>
+    <div class="input-wrapper">
+        <i class="input-icon fas fa-thumbs-down"></i>
+        <input type="number" id="input17" name="input17" required autocomplete="off">
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="input18">ဆဲဆိုခံခဲ့ရသော Data စာရင်း</label>
+    <div class="input-wrapper">
+        <i class="input-icon fas fa-exclamation-triangle"></i>
+        <input type="number" id="input18" name="input18" required autocomplete="off">
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="input19">ကောင်းမွန်သောတုံ့ပြန်မှုရရှိခဲ့‌သော Data စာရင်း</label>
+    <div class="input-wrapper">
+        <i class="input-icon fas fa-thumbs-up"></i>
+        <input type="number" id="input19" name="input19" required autocomplete="off" readonly>
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="input20">ဖောက်သည် ရရှိသည့်စာရင်း</label>
+    <div class="input-wrapper">
+        <i class="input-icon fas fa-check-circle"></i>
+        <input type="number" id="input20" name="input20" required autocomplete="off" readonly>
+    </div>
+</div>
+                </div>
+            </div>
+
+            <div class="button-container">
+                <button type="submit">Submit Report</button>
+            </div>
+        </form>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('reportForm');
+        const loaderOverlay = document.getElementById('loaderOverlay');
+
+        const calculateInputs = () => {
+            const input5 = Number(document.getElementById('input5').value) || 0;
+            const input6 = Number(document.getElementById('input6').value) || 0;
+            const input7 = Number(document.getElementById('input7').value) || 0;
+            const input8 = Number(document.getElementById('input8').value) || 0;
+            const input13 = Number(document.getElementById('input13').value) || 0;
+            const input10 = Number(document.getElementById('input10').value) || 0;
+            const input17 = Number(document.getElementById('input17').value) || 0;
+            const input18 = Number(document.getElementById('input18').value) || 0;
+
+            // Calculate input9 as the sum of input5, input6, input7, input13, and input8
+            const input9 = input5 + input6 + input7 + input13 + input8;
+            document.getElementById('input9').value = input9;  // input9 is read-only
+
+            // Set input15 to input10 (input15 is read-only)
+            document.getElementById('input15').value = input10;
+
+            // Set input9, input19, and input20 to the same value (input9)
+            document.getElementById('input19').value = input9;  // input19 is read-only
+            document.getElementById('input20').value = input9;  // input20 is read-only
+
+            // Calculate input16 (input16 is read-only)
+            const input16 = input10 - (input17 + input18 + input9);
+            document.getElementById('input16').value = input16;  // input16 is read-only
+        };
+
+        // Attach input event listeners for calculations
+        ['input5', 'input6', 'input7', 'input8', 'input13', 'input10', 'input17', 'input18'].forEach(id => {
+            document.getElementById(id).addEventListener('input', calculateInputs);
+        });
+
+        // Initial calculations
+        calculateInputs();
+
+        // Show loader on form submit
+        form.addEventListener('submit', () => {
+            loaderOverlay.classList.add('active');
+            setTimeout(() => {
+                loaderOverlay.classList.remove('active');
+                // Uncomment to submit the form
+                // form.submit();
+            }, 10000);
+        });
+    });
+</script>
+
+
+</body>
+</html>
